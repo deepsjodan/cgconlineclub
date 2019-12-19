@@ -1,0 +1,137 @@
+/*
+ Theme Name:   Twenty Seventeen Child
+ Theme URI:    http://cgconline.club/twenty-seventeen-child/
+ Description:  Twenty Seventeen Child Theme
+ Author:       Deepa Jotheeswaran
+ Author URI:   http://cgconline.club
+ Template:     twentyseventeen
+ Version:      1.0.0
+ License:      GNU General Public License v2 or later
+ License URI:  http://www.gnu.org/licenses/gpl-2.0.html
+ Tags:         light, dark, two-columns, right-sidebar, responsive-layout, accessibility-ready
+ Text Domain:  twentyseventeenchild
+*/
+
+.site-header {
+     padding: 0px;
+}
+
+.custom-header {
+    position: relative;
+    height: 100px;
+    padding: 0px;
+    background: none;
+}
+
+.wrap{
+ padding: 0px;
+}
+
+.panel-content .wrap {
+	padding: 0px;
+}
+
+.wrap{
+ padding: 0px;
+}
+
+.page #content {
+padding-top: 13px !important;
+}
+
+.page .entry-header{
+   display:none;
+}
+
+
+.post-type-archive-coachingcalls .entry-header{
+   display:block;
+}
+
+input[type="range"]{
+	padding:0px;
+	border:none;
+	border-radius: 5px;
+}
+
+.entry-content a:hover{
+  -webkit-box-shadow:none;
+	box-shadow: none;
+}
+.entry-content a, .entry-summary a, .comment-content a, .widget a, .site-footer .widget-area a, .posts-navigation a, .widget_authors a strong {
+    box-shadow: none;
+}
+
+.entry-content a:focus{
+   -webkit-box-shadow:none;
+   box-shadow:none;
+}
+
+a:focus {
+    outline: none; 
+}
+
+.table thead th {
+    border-top: none;
+}
+
+a:not([href]):not([tabindex]) {
+    color: #007bff !important;
+}
+
+button, input[type="button"], input[type="submit"] {
+       background-color: lightgray;
+       -webkit-border-radius: 2px;
+       border-radius: 2px;
+       color:inherit;
+       padding:0 0.5em;
+       }
+
+.main-navigation > div > ul {
+    border: 0;
+    margin-bottom: 0;
+    padding: 0;
+    text-align: center;
+}
+
+button.close {
+    padding: 0.3em;
+}
+
+
+a {
+   cursor:pointer;
+}
+
+.site-header, .header-image .site-header {
+    background: #fff;
+}
+
+header-image .site-title > a {
+    background-position: center !important;
+    background-size: contain !important;
+    float: left;
+    height: 5rem;
+    width: 14rem;
+}
+
+.custom-logo-link {
+    padding-right: 0;
+}
+
+.site-branding {
+    padding: 1em 0;
+}
+
+.table-responsive-sm td{
+    line-height: 1.75rem;
+}
+
+
+
+
+
+
+
+
+

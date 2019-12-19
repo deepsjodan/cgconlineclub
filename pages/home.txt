@@ -1,0 +1,16 @@
+<style>
+.custom-header {
+    position: relative;
+    height: 180px!important;
+    padding: 0px;
+    background: none;
+}
+</style>
+<form id="frmAudio" method="post">
+<input type="hidden" name="sess_audio_id" id="sess_audio_id">
+<input type="hidden" name="sess_audio_title" id="sess_audio_title">
+<input type="hidden" name="sess_audio_file" id="sess_audio_file">
+<input type="hidden" name="sess_topic" id="sess_topic">
+<input type="hidden" name="sess_call_with" id="sess_call_with">
+[cgc_display_audio]
+</form>

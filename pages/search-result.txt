@@ -1,0 +1,3 @@
+<form id="frmSrchRslt" method="post">
+[cgc_display_search_result]
+</form>

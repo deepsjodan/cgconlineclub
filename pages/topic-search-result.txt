@@ -1,0 +1,3 @@
+<form id="frmTopicSrchRslt" method="post">
+[cgc_display_topic_srch_result]
+</form>

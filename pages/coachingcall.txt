@@ -1,0 +1,232 @@
+<div class="container-fluid">
+ [cgc_all_topics]
+  <div class="row">
+  <div class="col text-center">
+    [cgc_display_audio_title]
+     <div id="seekObjContainer" class="slidecontainer">
+  <input id="seekObj" type="range" name="rng" min="0" step="0.25" value="0" onchange="seekAudio()" oninput="seekAudio()" class="slider">
+</div>
+     
+      <small style="float: left; position: relative; left: 5px;" class="start-time"></small>
+     
+      <small style="float: right; position: relative; right: 5px;" data-toggle="tooltip" data-placement="left" title="Click to show Remining Time" class="end-time" onclick="showhideRemaining(this)"></small>
+      <br>
+<div id="player-container">
+      <audio  id="player" preload="auto" ondurationchange="setupSeek()" ontimeupdate="initProgressBar()">
+			  [cgc_display_audio_file]
+			</audio>
+    </div>
+       <p>
+        <div id="btn-controls">
+           <input type="image" id="rewind" src="https://img.icons8.com/ios/50/000000/skip-15-seconds-back.png" alt="Rewind 15" width="38" height="38" data-toggle="tooltip" data-placement="bottom" title="Rewind" onclick="rewindAudio();">&nbsp;&nbsp;&nbsp;
+           <input type="image" id="play" src="https://img.icons8.com/material-outlined/50/000000/circled-play.png" alt="Play" width="48" height="48" data-toggle="tooltip" data-placement="bottom" title="Play/Pause" onclick="playAudio();">&nbsp;&nbsp;&nbsp;
+           <input type="image" id="forward" src="https://img.icons8.com/ios/80/000000/skip-ahead-15-seconds.png" alt="Forward 15" width="38" height="38" data-toggle="tooltip" data-placement="bottom" title="Forward" onclick="forwardAudio();">
+        </div>
+        
+        </p>
+        </div>
+        </div>
+        
+       <div class="row text-center">
+        <div class="col">
+  <a href="#" onclick="bookmarkAudio()"><i class="fa fa-bookmark fa-2x" style="color:#FF5233;"></i><br>Create Bookmark</a>
+</div>
+<div class="col">
+   <a href="#" id="btn_hglt" data-toggle="modal" onclick="highlightAudio()"><img width="38" height="38" src="https://img.icons8.com/color/48/000000/border-color.png"><br>Start Highlight</a>
+</div>
+</div>
+<form id="frmMyBmHglt" method="post">
+<input type="hidden" name="sess_topic" id="sess_topic">
+<input type="hidden" name="sess_call_with" id="sess_call_with">
+
+<div class="row">
+<div class="col">
+<br>
+<div class="tab">
+  <ul class="nav nav-tabs nav-justified">
+     <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="#publicBm">Call Content</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#myBm">My Bookmarks</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#myHglt">My Highlights</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#notes">My Notes</a>
+    </li>
+  </ul>
+ 
+</div>
+<input type="hidden" id="rowNo" name="rowNo">
+<input type="hidden" id="pType" name="pType">
+<!-- Tab panes -->
+  <div class="tab-content">
+    <div id="publicBm" class="container tab-pane active"><br>
+      <h3>Call Content</h3>
+      [cgc_display_public_bm]
+    </div>
+   
+     <div id="myBm" class="container tab-pane fade"><br>
+      [cgc_display_warning_note]
+      <h3>My Bookmarks</h3>
+      <div class="table-responsive">
+     <table  class="table" id="tbl_bm" >
+       [cgc_display_my_bm]
+     </table>
+     </div>
+    </div>
+    
+    
+     <div id="myHglt" class="container tab-pane fade"><br>
+      [cgc_display_warning_note]
+      <h3>My Highlights</h3>
+      <div class="table-responsive">
+     <table  class="table" id="tbl_hglt" >[cgc_display_my_hglt]</table>
+     </div>
+    </div>
+    
+    
+     <div id="notes" class="container tab-pane fade"><br>
+      [cgc_display_warning_note]
+     <h3>Notes</h3>
+      <div class="form-group">
+        <textarea class="form-control" rows="5" name="my_note" id="my_note" onchange="updateNote(this.value);">[cgc_display_notes]</textarea>
+       </div>
+     </div>
+  </div>
+  
+  <div class="alert alert-success alert-dismissable" id="alert_bm">
+         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            Bookmark added successfully!
+        </div>
+
+<div class="alert alert-success alert-dismissable" id="alert_add_to_mylib">
+					 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						<span id="msg_add_to_mylib">Bookmark added to your library successfully!</span>
+					</div>
+        
+     <div class="alert alert-success alert-dismissable" id="alert_hglt">
+         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            Highlight added successfully!
+        </div>
+		
+   <!-- The editTitle Modal -->
+   <div class="modal fade" id="editTitle">
+      <div class="modal-dialog">
+      <div class="modal-content">
+      <!-- Modal Header -->
+        <div class="modal-header">
+          <h3>
+            Edit Title
+          </h3>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+      <div class="form-group">
+        <input type="text" class="form-control" id="mod_title">
+       </div>
+       </div>
+       <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="btn_saveTitle" onclick="saveTitle()">Save changes</button>
+        </div>
+       </div></div></div>
+	   
+	   <!-- The updateTag Modal -->
+	   <div class="modal fade" id="updateTag"> 
+      <div class="modal-dialog">
+      <div class="modal-content">
+      <!-- Modal Header -->
+        <div class="modal-header">
+          <h3>
+            Update Tags
+          </h3>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+     
+        <!-- Modal body -->
+        <div class="modal-body">
+         <div class="form-group">
+            <input type="text" id="mod_tag" data-role="tagsinput" class="form-control" value=""/>
+        </div></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="btn_saveTag" onclick="saveTags()">Save changes</button>
+        </div>
+       </div></div></div>
+
+<!-- The End Highlight Modal -->
+  <div class="modal fade endHgltModal" id="endHglt"> 
+      <div class="modal-dialog">
+      <div class="modal-content">
+      <!-- Modal Header -->
+        <div class="modal-header">
+          <div id="endHgltTitle">
+          <h3>
+            End Highlight
+          </h3></div>
+<button type="button" class="close modalMinimize" onclick="minimizeEndHglt(this)"> <i class='fa fa-minus fa-xs'></i> </button>
+        </div>
+     
+        <!-- Modal body -->
+        <div class="modal-body justify-content-center">
+             <p class="text-center"><strong><span class="display-4" id="show_timer"></span></strong></p>
+            <span id="show_msg"></span> 
+        </div>
+        <div class="modal-footer justify-content-center">
+         <div>
+          <button type="button" class="btn btn-primary" id="btn_endHglt" onclick="endHighlight()">End Highlight</button><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<button type="button" class="btn btn-link btn-sm" data-dismiss="modal" id="closeEndHglt">Cancel</button></div>
+        </div>
+       </div></div></div>
+ 
+<script>
+var all_topics= jQuery('#all_topics').val(); //retrieve array
+var data = [];
+if(data){
+ splVal = all_topics.split(',') ;
+ for(var i=0 ; i<splVal.length ; i++){
+     data.push(splVal[i]);
+ }
+}
+
+var tags = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    local: jQuery.map(data, function (tag) {
+        return {
+            name: tag
+        };
+    })
+});
+tags.initialize();
+
+jQuery('#mod_tag').tagsinput({
+    typeaheadjs: [{
+          minLength: 1,
+          highlight: true,
+    },{
+        minlength: 1,
+        name: 'tags',
+        displayKey: 'name',
+        valueKey: 'name',
+        source: tags.ttAdapter()
+    }],
+    freeInput: true
+});
+jQuery('#mod_tag').keypress(function(event){
+	
+	var keycode = (event.keyCode ? event.keyCode : event.which);
+	if(keycode == '13'){
+		alert('You pressed a "enter" key in textbox');	
+	}
+
+});
+</script>
+</div>
+<div id="minmax" class="minmaxCon"></div> 
+</form>

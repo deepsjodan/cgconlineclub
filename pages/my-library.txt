@@ -1,0 +1,171 @@
+<form id="frmMyLib" method="post">
+[cgc_all_topics]
+<input type="hidden" name="sess_audio_id" id="sess_audio_id">
+<input type="hidden" name="sess_audio_title" id="sess_audio_title">
+<input type="hidden" name="sess_audio_file" id="sess_audio_file">
+<input type="hidden" name="sess_lib_srch" id="sess_lib_srch">
+<div class="container-fluid">
+<div class="row">
+<div class="col">
+<br>
+<div class="tab">
+  <ul class="nav nav-tabs nav-justified">
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="#myBm">My Bookmarks</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#myHglt">My Highlights</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#notes">My Notes</a>
+    </li>
+  </ul>
+ 
+</div>
+
+<!-- Tab panes -->
+  <div class="tab-content">
+     <div id="myBm" class="container tab-pane active">
+      [cgc_display_lib_SrchBox]
+      <h3>My Bookmarks</h3>
+      <div class="table-responsive">
+     <table  class="table" id="tbl_bm" >
+       [cgc_display_all_my_bm]
+     </table>
+     </div>
+    </div>
+    
+    
+     <div id="myHglt" class="container tab-pane fade">
+      [cgc_display_lib_SrchBox]
+     <h3>My Highlights</h3>
+      <div class="table-responsive">
+     <table  class="table" id="tbl_hglt" >[cgc_display_all_my_hglt]</table>
+     </div>
+    </div>
+    
+    
+     <div id="notes" class="container tab-pane fade">
+     [cgc_display_lib_SrchBox]
+      <h3>My Notes</h3>
+      <div class="table-responsive">
+     <table  class="table" id="tbl_notes" >
+       [cgc_display_all_my_notes]
+     </table>
+     </div>
+     </div>
+  </div>
+
+  <!-- The editTitle Modal -->
+   <div class="modal fade" id="editTitle">
+      <div class="modal-dialog">
+      <div class="modal-content">
+      <!-- Modal Header -->
+        <div class="modal-header">
+          <h3>
+            Edit Title
+          </h3>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+      <div class="form-group">
+        <input type="text" class="form-control" id="mod_title">
+        <input type="hidden" id="rowNo" name="rowNo">
+        <input type="hidden" id="pType" name="pType">
+       </div>
+       </div>
+       <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="btn_saveTitle" onclick="saveTitle()">Save changes</button>
+        </div>
+       </div></div></div>
+	   
+	   <!-- The updateTag Modal -->
+	   <div class="modal fade" id="updateTag"> 
+      <div class="modal-dialog">
+      <div class="modal-content">
+      <!-- Modal Header -->
+        <div class="modal-header">
+          <h3>
+            Update Tags
+          </h3>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+     
+        <!-- Modal body -->
+        <div class="modal-body">
+         <div class="form-group">
+            <input type="text" id="mod_tag" data-role="tagsinput" class="form-control" value=""/>
+            <input type="hidden" id="rowNo" name="rowNo">
+            <input type="hidden" id="pType" name="pType">
+        </div></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="btn_saveTag" onclick="saveTags()">Save changes</button>
+        </div>
+       </div></div></div>
+
+         <!-- The editNote Modal -->
+   <div class="modal fade" id="editNote">
+      <div class="modal-dialog">
+      <div class="modal-content">
+      <!-- Modal Header -->
+        <div class="modal-header">
+          <h3>
+            Edit Note
+          </h3>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+      <div class="form-group">
+         <textarea class="form-control" rows="5" name="mod_note" id="mod_note"></textarea>
+        <input type="hidden" id="rowNo" name="rowNo">
+        <input type="hidden" id="pType" name="pType">
+       </div>
+       </div>
+       <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="btn_saveNote" onclick="saveNote()">Save changes</button>
+        </div>
+       </div></div></div>
+</div></div>
+<script>
+var all_topics= jQuery('#all_topics').val(); //retrieve array
+var data = [];
+if(data){
+ splVal = all_topics.split(',') ;
+ for(var i=0 ; i<splVal.length ; i++){
+     data.push(splVal[i]);
+ }
+}
+
+var tags = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    local: jQuery.map(data, function (tag) {
+        return {
+            name: tag
+        };
+    })
+});
+tags.initialize();
+
+jQuery('#mod_tag').tagsinput({
+    typeaheadjs: [{
+          minLength: 1,
+          highlight: true,
+    },{
+        minlength: 1,
+        name: 'tags',
+        displayKey: 'name',
+        valueKey: 'name',
+        source: tags.ttAdapter()
+    }],
+    freeInput: true
+});
+</script>
+</form>

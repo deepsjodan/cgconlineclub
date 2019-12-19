@@ -1,0 +1,142 @@
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 3px;
+  height: 10px;
+  border-radius: none;
+  background: #0E0E0E;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 3px;
+  height: 10px;
+  border-radius: none;
+  background: #0E0E0E;
+  cursor: pointer;
+}
+
+#show_msg,#show_timer{
+  color:blue;
+  font-weight:bold;
+}
+
+.alert{
+    display: none;
+    position:fixed; 
+    top: 0px; 
+    left: 0px; 
+    width: 100%;
+    z-index:9999; 
+    border-radius:0px
+}
+
+@media (max-width: 768px) {
+  .nav-justified > li {
+    display: table-cell;
+    width: 1%;
+  }
+  .nav-justified > li > a  {
+    border-bottom: 1px solid #ddd !important;
+    border-radius: 4px 4px 0 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+.nav-tabs{
+  background-color: #d3d3d3;
+}
+.nav-tabs > li > a{
+  border: medium none;
+}
+a.active.nav-link{
+   background-color: #161616!important;
+   color: white!important;
+}
+a.nav-link{
+   color: black!important;
+}
+.modal-full {
+    min-width: 100%;
+    margin: 0;
+}
+
+.modal-full .modal-content {
+    min-height: 100vh;
+}
+
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a:active {
+  text-decoration: none;
+}
+
+.min .endHgltModal{
+	width: 70%; 
+	height: 35px;
+	overflow: hidden !important;
+	padding: 0px !important;
+	margin: 0px;    
+
+	float: left;  
+	position: static !important; 
+  }
+
+.min .modal-dialog, .min .modal-content{
+	height: 100%;
+	width: 100%;
+	margin: 0px !important;
+	padding: 0px !important; 
+  }
+
+.min .modal-header{
+	height: 100%;
+	width: 100%;
+	margin: 0px !important;
+	padding: 3px 5px !important; 
+  }
+
+.display-none{display: none;}
+
+.min .menuTab{display: none;}
+
+button:focus { outline: none; }
+
+.minmaxCon{
+  height: 35px;
+  bottom: 1px;
+  left: 1px;
+  position: fixed;
+  right: 1px;
+  z-index: 9999;
+}
