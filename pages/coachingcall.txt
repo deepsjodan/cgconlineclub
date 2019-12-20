@@ -21,6 +21,21 @@
            <input type="image" id="rewind" src="https://img.icons8.com/ios/50/000000/skip-15-seconds-back.png" alt="Rewind 15" width="38" height="38" data-toggle="tooltip" data-placement="bottom" title="Rewind" onclick="rewindAudio();">&nbsp;&nbsp;&nbsp;
            <input type="image" id="play" src="https://img.icons8.com/material-outlined/50/000000/circled-play.png" alt="Play" width="48" height="48" data-toggle="tooltip" data-placement="bottom" title="Play/Pause" onclick="playAudio();">&nbsp;&nbsp;&nbsp;
            <input type="image" id="forward" src="https://img.icons8.com/ios/80/000000/skip-ahead-15-seconds.png" alt="Forward 15" width="38" height="38" data-toggle="tooltip" data-placement="bottom" title="Forward" onclick="forwardAudio();">
+          <div class="dropdown">
+    <button type="button" class="btn btn-circle" data-toggle="dropdown" id="playRateBtn">
+      1.25x
+    </button>
+    <div class="dropdown-menu">
+    <h6>Play speed</h6>
+    <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="#" onclick="changePlayrate(this);">0.5x</a>
+      <a class="dropdown-item" href="#" onclick="changePlayrate(this);">0.75x</a>
+      <a class="dropdown-item" href="#" onclick="changePlayrate(this);">1x</a>
+      <a class="dropdown-item" href="#" onclick="changePlayrate(this);">1.25x</a>
+       <a class="dropdown-item" href="#" onclick="changePlayrate(this);">1.5x</a>
+        <a class="dropdown-item" href="#" onclick="changePlayrate(this);">2x</a>
+    </div>
+  </div>
         </div>
         
         </p>
@@ -150,12 +165,12 @@
      
         <!-- Modal body -->
         <div class="modal-body">
+         <h6>Press Enter to add tag. You can add multiple tags.</h6>
          <div class="form-group">
             <input type="text" id="mod_tag" data-role="tagsinput" class="form-control" value=""/>
         </div></div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="btn_saveTag" onclick="saveTags()">Save changes</button>
         </div>
        </div></div></div>
 
@@ -217,14 +232,6 @@ jQuery('#mod_tag').tagsinput({
         source: tags.ttAdapter()
     }],
     freeInput: true
-});
-jQuery('#mod_tag').keypress(function(event){
-	
-	var keycode = (event.keyCode ? event.keyCode : event.which);
-	if(keycode == '13'){
-		alert('You pressed a "enter" key in textbox');	
-	}
-
 });
 </script>
 </div>

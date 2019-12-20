@@ -221,7 +221,90 @@ function fnUpdateTag(obj,rwCnt){
 }
 
 
-function saveTags(){
+jQuery('input').on('itemAdded', function(event) {
+	
+   if(document.getElementById('pType').value == '') return;
+   updateTopic(event.item, 'Y');
+});
+
+
+jQuery('input').on('itemRemoved', function(event) {
+  // event.item: contains the item
+  
+  if(document.getElementById('pType').value == '') return;
+  updateTopic(event.item, 'N');
+});
+
+function updateTopic(topic, isTopicAdded){
+   
+   var pType = document.getElementById('pType').value;
+   var rowNo = document.getElementById('rowNo').value;
+   
+   
+   var audio_id = ( typeof(document.getElementById('frmMyLib')) == "undefined") ?
+					document.getElementById('audio_id').value : 
+					((pType == "bm") ? document.getElementById('wau_audio_id_'+rowNo).value :
+					document.getElementById('hglt_wau_audio_id_'+rowNo).value);
+   
+   if(pType == 'bm'){
+	
+	   var user_bm_id = document.getElementById('user_bm_id_'+rowNo).value;
+	   if(user_bm_id) updateDbTopic(pType, audio_id, user_bm_id, topic, isTopicAdded);
+   }else{
+	   
+	   var user_hglt_id = document.getElementById('user_hglt_id_'+rowNo).value;
+	   if(user_hglt_id) updateDbTopic(pType, audio_id, user_hglt_id, topic, isTopicAdded);
+   }
+}
+
+function updateDbTopic(pType, audio_id, user_db_id, topic, isTopicAdded){
+	
+  var data = {
+		'action': 'cgc_update_user_topic',
+		'topic': topic,
+		'user_db_id': user_db_id,
+		'audio_id': audio_id,
+		'ptype': pType,
+		'isTopicAdded': isTopicAdded
+	    };
+		
+  jQuery.post(ajaxurl, data, function(response) {
+    console.log( response );
+  });
+
+}
+
+jQuery('#updateTag').on('hidden.bs.modal', function () {
+   
+   var pType = document.getElementById('pType').value;
+   var rowNo = document.getElementById('rowNo').value;
+   var tags =  document.getElementById('mod_tag').value;
+   
+   
+   var splTags = tags.split(",");
+   if(pType == 'bm'){
+	   var tagDiv = document.getElementById('bm_tag_'+rowNo);
+   }else{
+	   var tagDiv = document.getElementById('hglt_tag_'+rowNo);
+   }
+   
+   tagDiv.innerHTML = '';
+
+   for (var i=0; i<splTags.length; i++){
+        var newSpan = document.createElement('span');
+        newSpan.innerHTML = splTags[i];
+        newSpan.setAttribute('class', 'badge badge-info');
+		tagDiv.appendChild(newSpan);
+		space = document.createTextNode('  ');
+		tagDiv.appendChild(space);
+   }
+   
+   document.getElementById('rowNo').value = '';
+   document.getElementById('pType').value = '';
+  
+});
+
+/*function saveTags(){
 
    var pType = document.getElementById('pType').value;
    var rowNo = document.getElementById('rowNo').value;
@@ -270,7 +353,7 @@ function updateDbTags(pType, audio_id, user_db_id, tags){
     console.log( response );
   });
 
-}
+}*/
 
 
 
@@ -420,6 +503,8 @@ jQuery('#endHglt').on('hidden.bs.modal', function () {
   document.getElementById('endHgltTitle').innerHTML  = 'End Highlight';     
   jQuery('.modalMinimize').find("i").removeClass('fa fa-clone').addClass( 'fa fa-minus');
   clearHglt();
+  document.getElementById('rowNo').value = '';
+  document.getElementById('pType').value = '';
 });
 
 
@@ -434,7 +519,7 @@ function fnEditNote(rwCnt){
 function saveNote(){
 	
 	var rowNo = document.getElementById('rowNo').value;
-	var audio_id = document.getElementById('wau_audio_id_'+rowNo).value;
+	var audio_id = document.getElementById('nt_wau_audio_id_'+rowNo).value;
 	var mod_note = document.getElementById('mod_note').value 
     document.getElementById('notes_'+rowNo).innerHTML = document.getElementById('mod_note').value;
 	var user_nt_id = document.getElementById('user_notes_'+rowNo).value;
@@ -465,7 +550,7 @@ function updateNote(noteVal){
 
 function playMyLibHglt(rwCnt){
 	
-   var aid = document.getElementById('audio_'+rwCnt);
+   var aid = document.getElementById('hglt_audio_'+rwCnt);
    var icon = document.getElementById('hglt_play_icon_'+rwCnt);
    //var interval;
    if(aid.paused){
@@ -488,5 +573,8 @@ function playMyLibHglt(rwCnt){
        icon.innerHTML = '<i class="fa fa-play fa-lg"></i>';
    }
 }
+
+
+
 
 

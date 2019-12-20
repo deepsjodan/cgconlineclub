@@ -673,7 +673,7 @@ function fncgc_process_search_result($wpdb, $results, $srchCriteria, $frmId){
 			  $content .= '&nbsp;'; 
 		  }
 	  }
-	  $content .= '<br><br><a href="#" onclick="openAudio(\''.$frmId.'\','.$rwCnt.');" style="font-size: 150%">'.$row->audio_title.'</a>';
+	  $content .= '<br><br><a href="#" onclick="openAudio(\''.$frmId.'\','.$rwCnt.');" style="font-size: 150%">From '.$row->audio_title.'</a>';
 	  $content .= '</td></tr>';
 	 }
 	 
@@ -900,6 +900,57 @@ function fncgc_update_user_topics(){
 
 add_action('wp_ajax_cgc_update_user_topics','fncgc_update_user_topics');
 
+
+function fncgc_update_user_topic(){
+	
+   global $wpdb;
+   
+   if($_POST['ptype'] == 'bm'){
+	   $audio_topic_id = $wpdb->get_var("SELECT wat_audio_topics_id
+										FROM wpcr_audio_topics
+										WHERE wat_audio_id = ".$_POST['audio_id'].
+										" AND wat_user_bookmarks_id = ".$_POST['user_db_id'].
+										" AND wat_topic = '".$_POST['topic']."'"); 
+													
+	   
+   }else{
+	   $audio_topic_id = $wpdb->get_var("SELECT wat_audio_topics_id
+										FROM wpcr_audio_topics
+										WHERE wat_audio_id = ".$_POST['audio_id'].
+										" AND wat_user_highlights_id = ".$_POST['user_db_id'].
+										" AND wat_topic = '".$_POST['topic']."'"); 
+   }
+   
+   if($_POST['isTopicAdded'] == 'Y'){
+   
+	   if(is_null($audio_topic_id)){
+					  
+		  $table = "wpcr_audio_topics";
+		  if($_POST['ptype'] == 'bm'){
+			  $data = array('wat_audio_id' => $_POST['audio_id'], 
+							'wat_topic' => $_POST['topic'],
+							'wat_user_bookmarks_id' => $_POST['user_db_id']);
+		  }else{
+			  $data = array('wat_audio_id' => $_POST['audio_id'], 
+							'wat_topic' => $_POST['topic'],
+							'wat_user_highlights_id' => $_POST['user_db_id']);
+		  }
+		  $wpdb->insert($table,$data);
+	   }
+   
+	}else{
+	   if(!empty($audio_topic_id)){
+		   $table = 'wpcr_audio_topics';
+		   $wpdb->delete( $table, array('wat_audio_topics_id' => $audio_topic_id));
+	   }
+    }
+	    
+     echo 'success' ;
+     wp_die(); 
+}
+add_action('wp_ajax_cgc_update_user_topic','fncgc_update_user_topic');
+
+
 function fncgc_update_user_notes(){
 	
    global $wpdb;
@@ -1028,7 +1079,7 @@ function fncgc_display_all_my_bm(){
 			 $content .= '</div>';
 			 
 	
-		    $content .= '<br><a href="#" onclick="openAudio(\''.$frmId.'\','.$rwCnt.');" style="font-size: 110%">'.$row->audio_title.'</a>';
+		    $content .= '<br><a href="#" onclick="openAudio(\''.$frmId.'\','.$rwCnt.');" style="font-size: 110%">From '.$row->audio_title.'</a>';
 			$content .= '</td><td>';
 			$content .= '<div class="text-right">
 							<button type="button" class="btn btn-link  dropdown-toggle-split" data-toggle="dropdown">
@@ -1091,11 +1142,11 @@ function fncgc_display_all_my_hglt(){
 			$locHms = $row->wuh_location;
 			$hgltIdVal = $row->wuh_user_highlights_id;
 			
-			$audio_id = 'wau_audio_id_'.$rwCnt ;
-		    $audio_title = 'audio_title_'.$rwCnt ;
-		    $audio_file = 'wau_audio_file_'.$rwCnt ;
+			$audio_id = 'hglt_wau_audio_id_'.$rwCnt ;
+		    $audio_title = 'hglt_audio_title_'.$rwCnt ;
+		    $audio_file = 'hglt_wau_audio_file_'.$rwCnt ;
 		    $playIcon = 'hglt_play_icon_'.$rwCnt ;
-		    $audio = 'audio_'.$rwCnt ;
+		    $audio = 'hglt_audio_'.$rwCnt ;
 			$frmId = 'frmMyLib';
 			
 			
@@ -1129,7 +1180,7 @@ function fncgc_display_all_my_hglt(){
 				  }
 			  }
 			$content .= '</div>';
-			$content .= '<br><a href="#" onclick="openAudio(\''.$frmId.'\','.$rwCnt.');" style="font-size: 110%">'.$row->audio_title.'</a>';
+			$content .= '<br><a href="#" onclick="openAudio(\''.$frmId.'\','.$rwCnt.');" style="font-size: 110%">From '.$row->audio_title.'</a>';
 			$content .= '</td><td>';
 			$content .= '<div class="text-right">
 							<button type="button" class="btn btn-link  dropdown-toggle-split" data-toggle="dropdown">
@@ -1175,9 +1226,9 @@ function fncgc_display_all_my_notes(){
 			$notesIdVal = $row->wun_user_notes_id;
 			$rw = 'notes_row_'.$rwCnt;
 			
-			$audio_id = 'wau_audio_id_'.$rwCnt ;
-		    $audio_title = 'audio_title_'.$rwCnt ;
-		    $audio_file = 'wau_audio_file_'.$rwCnt ;
+			$audio_id = 'nt_wau_audio_id_'.$rwCnt ;
+		    $audio_title = 'nt_audio_title_'.$rwCnt ;
+		    $audio_file = 'nt_wau_audio_file_'.$rwCnt ;
 			$frmId = 'frmMyLib';
 			
 			
@@ -1190,7 +1241,7 @@ function fncgc_display_all_my_notes(){
 			$content .=  '<input type="hidden" name="'.$audio_title.'" id="'.$audio_title.'" value="'.$row->audio_title.'">';
 			$content .=  '<input type="hidden" name="'.$audio_file.'" id="'.$audio_file.'" value="'.$row->wau_audio_file.'">';
 						 
-			$content .= '<br><a href="#" onclick="openAudio(\''.$frmId.'\','.$rwCnt.');">'.$row->audio_title.'</a>';
+			$content .= '<br><a href="#" onclick="openAudio(\''.$frmId.'\','.$rwCnt.');">From '.$row->audio_title.'</a>';
 			$content .= '</td><td>';
 			$content .= '<div class="text-right">
 							<button type="button" class="btn btn-link  dropdown-toggle-split" data-toggle="dropdown">
