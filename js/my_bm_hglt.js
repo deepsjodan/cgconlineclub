@@ -484,9 +484,10 @@ function minimizeEndHglt(obj){
 		jQuery('#minmax').toggleClass("min");
 		jQuery(".minmaxCon").append($apnData);  
 		var sTimer = document.getElementById('show_timer').innerHTML;
-		//document.getElementById('endHgltTitle').innerHTML = document.getElementById('show_timer').innerHTML;
+		document.getElementById('endHgltTitle').innerHTML = '<h3>'+ sTimer +'</h3>';
+		//document.getElementById('endHgltTitle').innerHTML = '<h3>'+ sTimer +'</h3><div><button type="button" class="btn btn-primary" id="btn_endHglt" onclick="endHighlight()">End Highlight</button>&nbsp;<button type="button" class="btn btn-link btn-sm" data-dismiss="modal" id="closeEndHglt">Cancel</button></div>';
 		
-		jQuery("#endHgltTitle").html('<h3>'+ sTimer +'</h3><div><button type="button" class="btn btn-primary" id="btn_endHglt" onclick="endHighlight()">End Highlight</button>&nbsp;<button type="button" class="btn btn-link btn-sm" data-dismiss="modal" id="closeEndHglt">Cancel</button></div>');
+		//jQuery("#endHgltTitle").html('<h3>'+ sTimer +'</h3><div><button type="button" class="btn btn-primary" id="btn_endHglt" onclick="endHighlight()">End Highlight</button>&nbsp;<button type="button" class="btn btn-link btn-sm" data-dismiss="modal" id="closeEndHglt">Cancel</button></div>');
 		jQuery(obj).find("i").toggleClass( 'fa-minus').toggleClass( 'fa-clone');
 	  } 
 	  else { 

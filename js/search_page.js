@@ -65,6 +65,15 @@ function srchLib(frmid){
 }
 
 
+function clrSrch(frmid){
+	
+	var frm = document.getElementById(frmid);
+	document.getElementById('sess_lib_srch').value = "";
+	
+	frm.action = '/my-library/';
+    frm.submit();
+}
+
 function addToMyLib(audioId,bmTitle,bmLocSec,bmLoc){
 	
 	var data = {

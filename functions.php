@@ -35,7 +35,8 @@ function my_theme_enqueue_styles() {
 	wp_enqueue_script( 'tagsinput','https://cgconline.club/wp-content/themes/twentyseventeen/js/tagsinput.js');
 	if(is_page(14)){
 		wp_enqueue_script( 'audioPlayer','https://cgconline.club/wp-content/themes/twentyseventeen/js/audio_player.js',array( 'jquery' ),'',true);
-		
+	}else{
+		wp_enqueue_script( 'srchaudioPlayer','https://cgconline.club/wp-content/themes/twentyseventeen/js/srch_audio_player.js',array( 'jquery' ),'',true);
 	}
 	wp_enqueue_script( 'myBmHglt','https://cgconline.club/wp-content/themes/twentyseventeen/js/my_bm_hglt.js',array( 'jquery' ),'',true);
 	wp_enqueue_script( 'searchpage','https://cgconline.club/wp-content/themes/twentyseventeen/js/search_page.js',array( 'jquery' ),'',true);
@@ -92,11 +93,11 @@ function fncgc_form_submit(){
 
 add_action('wp_head','fncgc_form_submit');
 
-/*add_action( 'wp', 'fncgc_unset_search_all' );
+add_action( 'wp', 'fncgc_unset_search_all' );
 function fncgc_unset_search_all() {
     //Reset sessions on refresh page
     unset( $_SESSION['lib_srch'] );
-}*/
+}
 
 
 
@@ -544,7 +545,7 @@ function fncgc_display_lib_SrchBox(){
 							<div class="input-group mb-3">
 								<input type="text" class="form-control input-sm" placeholder="Search My Library" id="libSrch" name="libSrch">
 								<div class="input-group-append">
-									<button type="submit" onclick="srchLib(\'frmMyLib\');"><i class="fa fa-search fa-sm"></i></button>
+									<button type="submit" onclick="srchLib(\'frmMyLib\');return false;"><i class="fa fa-search fa-sm"></i></button>
 								</div>
 							</div>
 						</div>
@@ -637,10 +638,11 @@ function fncgc_process_search_result($wpdb, $results, $srchCriteria, $frmId){
 			  $length = $row->next_bm - $row->wpb_location_secs;
 			  $content .= '<br><span class="badge badge-light">'.getMinutes($length).'</span><br>';
 		   }
-		  $content .= '<a tabindex="0" onclick="splayPubBm('.$rwCnt.','.$row->wpb_location_secs.');"><span id="'.$playIcon.'"><i class="fa fa-play fa-lg"></i></span></a>';
-		  $content .= '<audio preload="auto" id="'.$audio.'"><source src="'.$row->wau_audio_file.'" type="audio/mp3"></audio>';
+		  //$content .= '<a tabindex="0" onclick="splayPubBm('.$rwCnt.','.$row->wpb_location_secs.');"><span id="'.$playIcon.'"><i class="fa fa-play fa-lg"></i></span></a>';
+		  //$content .= '<audio preload="auto" id="'.$audio.'"><source src="'.$row->wau_audio_file.'" type="audio/mp3"></audio>';
 		  $content .= '<br>';
-
+          $content .= fncgc_get_audio_player($row->wau_audio_file,$rwCnt,$row->wpb_location_secs,$row->next_bm,'srch_');
+		  
 		  if(get_current_user_id() > 0){
 			$content .= '<a tabindex="0" onclick="addToMyLib('.$row->wpb_audio_id.',\''.$row->wpb_title.'\','.$row->wpb_location_secs.',\''.$row->wpb_location.'\');"><i class="fas fa-plus"></i> Add to My Library</a> ';
 			$content .= '<br>';
@@ -689,6 +691,70 @@ function fncgc_process_search_result($wpdb, $results, $srchCriteria, $frmId){
 						<span id="msg_add_to_mylib">Bookmark added to your library successfully!</span>
 					</div></div></div>';
 	  return $content;
+}
+
+
+function fncgc_get_audio_player($audio_file,$rwCnt,$audio_strt_tym,$audio_end_tym,$prefix){
+	
+	$audio = $prefix.'audio_'.$rwCnt ;
+	$seekObj = $prefix.'seekObj_'.$rwCnt;
+	$isSeeking = $prefix.'isSeeking_'.$rwCnt;
+	$strt_tym = $prefix.'start-time_'.$rwCnt;
+	$end_tym = $prefix.'end-time_'.$rwCnt;
+	$playRateBtn = $prefix.'playRateBtn_'.$rwCnt;
+	$play = $prefix.'play_'.$rwCnt;
+	$rewind = $prefix.'rewind_'.$rwCnt;
+	$forward = $prefix.'forward_'.$rwCnt;
+	
+	$content = '<div style="width:75%">
+				<div id="seekObjContainer" class="slidecontainer">
+					<input id="'.$seekObj.'" type="range" name="rng" min="0" step="0.25"
+					value="0" onchange="seekAudio(\''.$prefix.'\','.$rwCnt.')" oninput="seekAudio(\''.$prefix.'\','.$rwCnt.')" class="slider">
+					<input type="hidden" id="'.$isSeeking.'" name="'.$isSeeking.'" value="N">
+				</div>
+				<small style="float: left; position: relative; left: 5px;" id="'.$strt_tym.'" class="start-time"></small>
+				<small style="float: right; position: relative; right: 5px;" id="'.$end_tym.'" data-toggle="tooltip" 
+				data-placement="left" title="Click to show Remining Time" class="end-time" 
+				onclick="showhideRemaining(\''.$prefix.'\','.$rwCnt.')"></small>
+				<br>
+				<div id="player-container">
+					<audio  id="'.$audio.'" preload="auto" ondurationchange="setupSeek(\''.$prefix.'\','.$rwCnt.')" 
+					ontimeupdate="initProgressBar(\''.$prefix.'\','.$rwCnt.')">
+							  <source src="'.$audio_file.'" type="audio/mp3">
+							</audio>
+					</div>
+					   <p>
+						<div id="btn-controls" style="text-align:center;">
+						   <input type="image" id="'.$rewind.'" src="https://img.icons8.com/ios/50/000000/skip-15-seconds-back.png" 
+						   alt="Rewind 15" width="38" height="38" data-toggle="tooltip" data-placement="bottom" 
+						   title="Rewind" onclick="rewindAudio(\''.$prefix.'\','.$rwCnt.');return false;">&nbsp;&nbsp;&nbsp;
+						   <input type="image" id="'.$play.'" src="https://img.icons8.com/material-outlined/50/000000/circled-play.png" 
+						   alt="Play" width="48" height="48" data-toggle="tooltip" data-placement="bottom" 
+						   title="Play/Pause" onclick="playAudio(\''.$prefix.'\','.$rwCnt.','.$audio_strt_tym.','.$audio_end_tym.');return false;">&nbsp;&nbsp;&nbsp;
+						   <input type="image" id="'.$forward.'" src="https://img.icons8.com/ios/80/000000/skip-ahead-15-seconds.png" 
+						   alt="Forward 15" width="38" height="38" data-toggle="tooltip" data-placement="bottom" 
+						   title="Forward" onclick="forwardAudio(\''.$prefix.'\','.$rwCnt.');return false;">
+						  <div class="dropdown">
+					<button type="button" class="btn btn-circle" data-toggle="dropdown" id="'.$playRateBtn.'">
+					  1.0x
+					</button>
+					<div class="dropdown-menu">
+					<h6>Play speed</h6>
+					<div class="dropdown-divider"></div>
+					  <a class="dropdown-item" tabindex="0" onclick="changePlayrate(this,\''.$prefix.'\','.$rwCnt.');return false;">0.5x</a>
+					  <a class="dropdown-item" tabindex="0" onclick="changePlayrate(this,\''.$prefix.'\','.$rwCnt.');return false;">0.75x</a>
+					  <a class="dropdown-item" tabindex="0" onclick="changePlayrate(this,\''.$prefix.'\','.$rwCnt.');return false;">1.0x</a>
+					  <a class="dropdown-item" tabindex="0" onclick="changePlayrate(this,\''.$prefix.'\','.$rwCnt.');return false;">1.25x</a>
+					   <a class="dropdown-item" tabindex="0" onclick="changePlayrate(this,\''.$prefix.'\','.$rwCnt.');return false;">1.5x</a>
+						<a class="dropdown-item" tabindex="0" onclick="changePlayrate(this,\''.$prefix.'\','.$rwCnt.');return false;">2.0x</a>
+					</div>
+				  </div>
+						</div>
+						
+						</p></div>';
+						
+						return $content;
+	
 }
 
 
@@ -995,9 +1061,23 @@ add_action( 'wp_ajax_cgc_update_user_notes', 'fncgc_update_user_notes' );
 //add_action( 'wp_ajax_nopriv_cgc_update_user_notes', 'fncgc_update_user_notes' );
 
 
+function fncgc_show_srch_header($lib_srch){
+	
+	$content = '<div id="srch_mylib" class="row">
+					<div class="col-8">
+						<span id="srch_msg">Search Results for '.$lib_srch.'</span>
+						<button type="button" class="btn btn-primary" id="btn_srchMylib" 
+						onclick="clrSrch(\'frmMyLib\');return false;">Clear Search</button>
+					</div>
+					<div class="col">&nbsp;</div>
+				</div>';
+	return $content;
+}
+
 function fncgc_display_all_my_bm(){
 	global $wpdb;
 	$user_id = get_current_user_id();
+	$content = '';
 	if(!isset($_SESSION['lib_srch'])) $_SESSION['lib_srch'] = '';
 	
 	if($user_id > 0){
@@ -1020,8 +1100,14 @@ function fncgc_display_all_my_bm(){
 												  WHERE wat_audio_id = a.wub_audio_id
                                                   AND wat_user_bookmarks_id = a.wub_user_bookmarks_id
                                                   AND UPPER(wat_topic) LIKE UPPER('%".$_SESSION['lib_srch']."%'))) 
-										ORDER BY b.wau_audio_date DESC,a.wub_location_secs ASC");  
-		$content = '';
+										ORDER BY a.wub_date_time DESC");
+		if(!empty($_SESSION['lib_srch'])){
+			
+			$content .= fncgc_show_srch_header($_SESSION['lib_srch']);
+		}
+		$content .= '<h3>My Bookmarks</h3>
+					  <div class="table-responsive">
+						<table  class="table" id="tbl_bm" >';
 		 if(!empty($results))                       
 		{  
 		  $rwCnt = 1;
@@ -1055,8 +1141,11 @@ function fncgc_display_all_my_bm(){
 				  $length = $row->next_bm - $row->wub_location_secs;
 				  $content .= '<br><span class="badge badge-light">'.getMinutes($length).'</span>';
 			   }
-			  $content .= '<br><a tabindex="0" onclick="splayPubBm('.$rwCnt.','.$row->wub_location_secs.');"><span id="'.$playIcon.'"><i class="fa fa-play fa-lg"></i></span></a>';
-			  $content .= '<audio preload="auto" id="'.$audio.'"><source src="'.$row->wau_audio_file.'" type="audio/mp3"></audio>';
+			  //$content .= '<br><a tabindex="0" onclick="splayPubBm('.$rwCnt.','.$row->wub_location_secs.');"><span id="'.$playIcon.'"><i class="fa fa-play fa-lg"></i></span></a>';
+			  //$content .= '<audio preload="auto" id="'.$audio.'"><source src="'.$row->wau_audio_file.'" type="audio/mp3"></audio>';
+			  $content .= '<br><br>';
+              $content .= fncgc_get_audio_player($row->wau_audio_file,$rwCnt,$row->wub_location_secs,$row->next_bm,'bm_');
+		  
 			  $content .=  '<input type="hidden" name="'.$audio_id.'" id="'.$audio_id.'" value="'.$row->wub_audio_id.'">';
 			  $content .=  '<input type="hidden" name="'.$audio_title.'" id="'.$audio_title.'" value="'.$row->audio_title.'">';
 			  $content .=  '<input type="hidden" name="'.$audio_file.'" id="'.$audio_file.'" value="'.$row->wau_audio_file.'">';
@@ -1092,6 +1181,7 @@ function fncgc_display_all_my_bm(){
 			$rwCnt++;
 		  }
 		}
+		$content .= '</table>';
 		return $content;
 	}
 									
@@ -1121,7 +1211,14 @@ function fncgc_display_all_my_hglt(){
 											  WHERE wat_audio_id = a.wuh_audio_id
 											  AND wat_user_highlights_id = a.wuh_user_highlights_id
 											  AND UPPER(wat_topic) LIKE UPPER('%".$_SESSION['lib_srch']."%'))) 
-                                    ORDER BY b.wau_audio_date DESC,a.wuh_start_time_secs ASC"); 
+                                    ORDER BY a.wuh_date_time DESC"); 
+		if(!empty($_SESSION['lib_srch'])){
+			
+			$content .= fncgc_show_srch_header($_SESSION['lib_srch']);
+		}
+		$content .= '<h3>My Highlights</h3>
+					  <div class="table-responsive">
+					 <table  class="table" id="tbl_hglt" >';
 		if(!empty($results))                       
 		{  
 		  $rwCnt = 1;
@@ -1158,8 +1255,10 @@ function fncgc_display_all_my_hglt(){
 						 <input type="hidden" id="'.$hgltId.'" name="'.$hgltId.'" value="'.$hgltIdVal.'">
 						 <input type="hidden" id="'.$sTym.'" name="'.$sTym.'" value="'.$sTymVal.'">
 						 <input type="hidden" id="'.$eTym.'" name="'.$eTym.'" value="'.$eTymVal.'"><br>';
-			$content .= '<a tabindex="0" onclick="playMyLibHglt('.$rwCnt.');"><span id="'.$playIcon.'"><i class="fa fa-play fa-lg"></i></span></a>';
-			$content .= '<audio preload="auto" id="'.$audio.'"><source src="'.$row->wau_audio_file.'" type="audio/mp3"></audio>';
+			//$content .= '<a tabindex="0" onclick="playMyLibHglt('.$rwCnt.');"><span id="'.$playIcon.'"><i class="fa fa-play fa-lg"></i></span></a>';
+			//$content .= '<audio preload="auto" id="'.$audio.'"><source src="'.$row->wau_audio_file.'" type="audio/mp3"></audio>';
+			$content .= '<br><br>';
+            $content .= fncgc_get_audio_player($row->wau_audio_file,$rwCnt,$row->wuh_start_time_secs,$row->wuh_end_time_secs,'hglt_');
 			$content .=  '<input type="hidden" name="'.$audio_id.'" id="'.$audio_id.'" value="'.$row->wuh_audio_id.'">';
 			$content .=  '<input type="hidden" name="'.$audio_title.'" id="'.$audio_title.'" value="'.$row->audio_title.'">';
 			$content .=  '<input type="hidden" name="'.$audio_file.'" id="'.$audio_file.'" value="'.$row->wau_audio_file.'">';
@@ -1192,6 +1291,7 @@ function fncgc_display_all_my_hglt(){
 			$rwCnt++;
 		  }
 		}
+		$content .= '</table>';
 		return $content;
 	}
 }
@@ -1214,7 +1314,15 @@ function fncgc_display_all_my_notes(){
 											WHERE b.wau_audio_id = a.wun_audio_id
 											AND a.wun_user_id = ".$user_id."
 											AND UPPER(a.wun_notes) like UPPER('%".$_SESSION['lib_srch']."%')
-											ORDER BY b.wau_audio_date DESC"); 
+											ORDER BY a.wun_date_time DESC"); 
+		if(!empty($_SESSION['lib_srch'])){
+			
+			$content .= fncgc_show_srch_header($_SESSION['lib_srch']);
+		}
+		
+		$content .= '<h3>My Notes</h3>
+					  <div class="table-responsive">
+					 <table  class="table" id="tbl_notes" >';
 		if(!empty($results))                       
 		{  
 		  $rwCnt = 1;
@@ -1253,6 +1361,7 @@ function fncgc_display_all_my_notes(){
 			$rwCnt++;
 		  }
 		}
+		$content .= '</table>';
 		return $content;
 	}
 }
