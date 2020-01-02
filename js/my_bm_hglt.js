@@ -241,7 +241,7 @@ function updateTopic(topic, isTopicAdded){
    var rowNo = document.getElementById('rowNo').value;
    
    
-   var audio_id = ( typeof(document.getElementById('frmMyLib')) == "undefined") ?
+   var audio_id = (document.getElementById('frmMyLib') == null) ?
 					document.getElementById('audio_id').value : 
 					((pType == "bm") ? document.getElementById('wau_audio_id_'+rowNo).value :
 					document.getElementById('hglt_wau_audio_id_'+rowNo).value);

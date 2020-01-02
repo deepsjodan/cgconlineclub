@@ -2,7 +2,7 @@ function openAudio(frmid,rwCnt){
    var frm = document.getElementById(frmid);
    document.getElementById('sess_audio_id').value = document.getElementById('wau_audio_id_'+rwCnt).value;
    document.getElementById('sess_audio_title').value = document.getElementById('audio_title_'+rwCnt).value;
-document.getElementById('sess_audio_file').value = document.getElementById('wau_audio_file_'+rwCnt).value;
+   document.getElementById('sess_audio_file').value = document.getElementById('wau_audio_file_'+rwCnt).value;
    frm.action = '/coachingcall/';
    frm.submit();
  }
@@ -58,7 +58,17 @@ function pauseOtherBm(){
 function srchLib(frmid){
 	
    var frm = document.getElementById(frmid);
-   document.getElementById('sess_lib_srch').value = document.getElementById('libSrch').value;
+   var lib_srch = '';
+   
+   if(document.getElementById('libSrch_bm').value){
+	   lib_srch = document.getElementById('libSrch_bm').value;
+   }else if(document.getElementById('libSrch_hglt').value){
+	   lib_srch = document.getElementById('libSrch_hglt').value;
+   }else{
+	   lib_srch = document.getElementById('libSrch_notes').value;
+   }
+	
+   document.getElementById('sess_lib_srch').value =lib_srch;
    
    frm.action = '/my-library/';
    frm.submit();

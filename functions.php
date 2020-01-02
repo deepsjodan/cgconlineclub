@@ -97,6 +97,7 @@ add_action( 'wp', 'fncgc_unset_search_all' );
 function fncgc_unset_search_all() {
     //Reset sessions on refresh page
     unset( $_SESSION['lib_srch'] );
+	log_me("inside unset  ");
 }
 
 
@@ -538,12 +539,12 @@ function fncgc_display_callwith_srch_result(){
 add_shortcode('cgc_display_callwith_srch_result','fncgc_display_callwith_srch_result');
 
 
-function fncgc_display_lib_SrchBox(){
+function fncgc_display_lib_SrchBox_bm(){
 	$content = '<br>
 					<div class="row">
 						<div class="col-8">
 							<div class="input-group mb-3">
-								<input type="text" class="form-control input-sm" placeholder="Search My Library" id="libSrch" name="libSrch">
+								<input type="text" class="form-control input-sm" placeholder="Search My Library" id="libSrch_bm" name="libSrch_bm">
 								<div class="input-group-append">
 									<button type="submit" onclick="srchLib(\'frmMyLib\');return false;"><i class="fa fa-search fa-sm"></i></button>
 								</div>
@@ -554,7 +555,44 @@ function fncgc_display_lib_SrchBox(){
 	return $content;
 }
 
-add_shortcode('cgc_display_lib_SrchBox','fncgc_display_lib_SrchBox');
+add_shortcode('cgc_display_lib_SrchBox_bm','fncgc_display_lib_SrchBox_bm');
+
+function fncgc_display_lib_SrchBox_hglt(){
+	$content = '<br>
+					<div class="row">
+						<div class="col-8">
+							<div class="input-group mb-3">
+								<input type="text" class="form-control input-sm" placeholder="Search My Library" id="libSrch_hglt" name="libSrch_hglt">
+								<div class="input-group-append">
+									<button type="submit" onclick="srchLib(\'frmMyLib\');return false;"><i class="fa fa-search fa-sm"></i></button>
+								</div>
+							</div>
+						</div>
+						<div class="col">&nbsp;</div>
+				</div>';
+	return $content;
+}
+
+add_shortcode('cgc_display_lib_SrchBox_hglt','fncgc_display_lib_SrchBox_hglt');
+
+function fncgc_display_lib_SrchBox_notes(){
+	$content = '<br>
+					<div class="row">
+						<div class="col-8">
+							<div class="input-group mb-3">
+								<input type="text" class="form-control input-sm" placeholder="Search My Library" id="libSrch_notes" name="libSrch_notes">
+								<div class="input-group-append">
+									<button type="submit" onclick="srchLib(\'frmMyLib\');return false;"><i class="fa fa-search fa-sm"></i></button>
+								</div>
+							</div>
+						</div>
+						<div class="col">&nbsp;</div>
+				</div>';
+	return $content;
+}
+
+add_shortcode('cgc_display_lib_SrchBox_notes','fncgc_display_lib_SrchBox_notes');
+
 
 function fncgc_display_warning_note(){
 	
@@ -1065,8 +1103,8 @@ function fncgc_show_srch_header($lib_srch){
 	
 	$content = '<div id="srch_mylib" class="row">
 					<div class="col-8">
-						<span id="srch_msg">Search Results for '.$lib_srch.'</span>
-						<button type="button" class="btn btn-primary" id="btn_srchMylib" 
+						<span id="srch_msg">Search Results for <strong>\''.$lib_srch.'\'</strong></span>
+						<button type="button" class="btn btn-link" id="btn_srchMylib" 
 						onclick="clrSrch(\'frmMyLib\');return false;">Clear Search</button>
 					</div>
 					<div class="col">&nbsp;</div>
@@ -1085,13 +1123,7 @@ function fncgc_display_all_my_bm(){
 										   a.wub_location,b.wau_audio_date,b.wau_audio_file,
 										   CONCAT('Coaching Call',' - ', 
 											DATE_FORMAT(b.wau_audio_date, '%M %D, %Y')) audio_title,
-											a.wub_user_bookmarks_id,
-											(SELECT x.wub_location_secs 
-											  FROM wpcr_user_bookmarks x
-											   WHERE x.wub_location_secs > a.wub_location_secs
-												and x.wub_audio_id = a.wub_audio_id
-												order by x.wub_location_secs 
-												limit 1)  next_bm
+											a.wub_user_bookmarks_id
 										FROM wpcr_user_bookmarks a,wpcr_audio b
 										WHERE b.wau_audio_id = a.wub_audio_id
 										AND a.wub_user_id = ".$user_id."
@@ -1137,14 +1169,9 @@ function fncgc_display_all_my_bm(){
 			             <input type="hidden" id="'.$rw.'" name="'.$rw.'" value="'.$rwCnt.'">
 						 <input type="hidden" id="'.$bmId.'" name="'.$bmId.'" value="'.$bmIdVal.'">
 						 <input type="hidden" id="'.$tym.'" name="'.$tym.'" value="'.$locSecs.'">';
-				if(!empty($row->next_bm)){
-				  $length = $row->next_bm - $row->wub_location_secs;
-				  $content .= '<br><span class="badge badge-light">'.getMinutes($length).'</span>';
-			   }
-			  //$content .= '<br><a tabindex="0" onclick="splayPubBm('.$rwCnt.','.$row->wub_location_secs.');"><span id="'.$playIcon.'"><i class="fa fa-play fa-lg"></i></span></a>';
-			  //$content .= '<audio preload="auto" id="'.$audio.'"><source src="'.$row->wau_audio_file.'" type="audio/mp3"></audio>';
+				
 			  $content .= '<br><br>';
-              $content .= fncgc_get_audio_player($row->wau_audio_file,$rwCnt,$row->wub_location_secs,$row->next_bm,'bm_');
+              $content .= fncgc_get_audio_player($row->wau_audio_file,$rwCnt,$row->wub_location_secs,0,'bm_');
 		  
 			  $content .=  '<input type="hidden" name="'.$audio_id.'" id="'.$audio_id.'" value="'.$row->wub_audio_id.'">';
 			  $content .=  '<input type="hidden" name="'.$audio_title.'" id="'.$audio_title.'" value="'.$row->audio_title.'">';
@@ -1255,8 +1282,6 @@ function fncgc_display_all_my_hglt(){
 						 <input type="hidden" id="'.$hgltId.'" name="'.$hgltId.'" value="'.$hgltIdVal.'">
 						 <input type="hidden" id="'.$sTym.'" name="'.$sTym.'" value="'.$sTymVal.'">
 						 <input type="hidden" id="'.$eTym.'" name="'.$eTym.'" value="'.$eTymVal.'"><br>';
-			//$content .= '<a tabindex="0" onclick="playMyLibHglt('.$rwCnt.');"><span id="'.$playIcon.'"><i class="fa fa-play fa-lg"></i></span></a>';
-			//$content .= '<audio preload="auto" id="'.$audio.'"><source src="'.$row->wau_audio_file.'" type="audio/mp3"></audio>';
 			$content .= '<br><br>';
             $content .= fncgc_get_audio_player($row->wau_audio_file,$rwCnt,$row->wuh_start_time_secs,$row->wuh_end_time_secs,'hglt_');
 			$content .=  '<input type="hidden" name="'.$audio_id.'" id="'.$audio_id.'" value="'.$row->wuh_audio_id.'">';
